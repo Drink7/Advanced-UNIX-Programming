@@ -1,0 +1,40 @@
+﻿int mydup2(int oldfd, int newfd){
+	
+	// 如果fd不在範圍內，比如說小於0或者是newfd大於最大值，就直接輸出錯誤訊息
+	if oldfd < 0 || newfd < 0 || newfd >= OPEN_MAX || oldfd >= OPEN_MAX
+		return -1
+
+	// 判斷該file descriptor是否已經被用過了(oldfd is null or not)
+	tmp = dup(oldfd)
+	if tmp == -1
+		return -1
+	else
+		close(oldfd);	
+
+	//如果新舊fd相同，直接回傳
+	if oldfd == newfd
+		return oldfd
+	
+	// 如果fd在範圍內，而且新舊fd不相同，代表新舊fd需要作dup
+	// start do dup2 using dup
+	// 先close 新的
+	close(newfd)
+	return do_dup2(oldfd, newfd);
+}
+
+int do_dup2(int oldfd, int newfd){
+	// 用暴力法迴圈方式去dup
+	// 直到return值等於newfd為止
+	// 這裡用一個array來handle被我們打開但其實不需要的fd
+	for i = 0 ~ newfd-1
+		arr[i] = dup(oldfd);
+
+		if arr[i] == newfd
+			isNew = i;
+			break;
+	
+	// 當然找到等於newfd的值以後，要將先前其他dup的fd給close	
+	for i = 0 ~ isNew
+		close(arr[i]);
+	return newfd	
+}
